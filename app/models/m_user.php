@@ -1,5 +1,5 @@
 <?php
-    class User
+    class m_user
     {
         private $db;
 

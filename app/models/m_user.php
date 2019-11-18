@@ -12,8 +12,8 @@
         {
             $this->db->query("SELECT * from users where email = :email");
             $this->db->bind(":email", $email);
-            $this->db->execute();
-            return ($this->db->rowCount() > 0 ? true : false);
+            $result =  $this->db->signle();
+            return ($this->db->rowCount() > 0 ? $result : false);
         }
 
         public function insertUser($data)

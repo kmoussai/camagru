@@ -22,6 +22,7 @@
         <a href="register"><button type="button" class="signupbtn">Sign Up</button></a>
 
       </div>
+      <a style="color: blue; padding: 5%;" href="#" >Forget password</a>
     </div>
   </form>
 </div>

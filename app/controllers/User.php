@@ -1,13 +1,15 @@
 <?php 
     class User extends Controller
     {
-        public function index($data = [])
+        public function index()
         {
-            $this->view('pages/index');
+            $this->login();
         }
 
         public function register()
         {
+            if (islogged())
+                redirect('');
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
                 'email' => trim($_POST['email']),
@@ -43,7 +45,7 @@
                 if (empty($data['rpassword_err']) && empty($data['password_err']) && empty($data['email_err'])){
                     $data['password'] = hash('sha256', $data['password']);
                     $this->model("m_user")->insertUser($data);
-                    header('location: ' . URLROOT . 'user/login');
+                    redirect('user/login');
                 }
                 else
                     $this->view('user/register', $data);
@@ -54,6 +56,9 @@
 
         public function login()
         {
+            if (islogged()){
+                redirect('');
+            }
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
                 'email' => trim($_POST['email']),
@@ -77,7 +82,10 @@
                 if (empty($data['password_err']) && empty($data['email_err']))
                 {
                     if ($this->model("m_user")->checkUser($data['email'], hash('sha256', $data['password'])))
-                        header('location: '. URLROOT);
+                    {
+                        $this->createUserSession($this->model("m_user")->findUserByEmail($data['email']));
+                        redirect("");
+                    }
                     else
                         $data['password_err'] = 'Incorrect password';
                     $this->view('user/login', $data);
@@ -88,5 +96,26 @@
             else
                 $this->view('user/login');
         }
+
+        public function edit()
+        {
+            if (!islogged()){
+                redirect('');
+            }
+            $this->view('user/edit');
+        }
+
+        public function logout()
+        {
+            unset($_SESSION['user_id']);
+            session_destroy();
+            redirect('user/login');
+        }
+
+        public function createUserSession($user)
+        {
+          //  session_start();
+            $_SESSION["user_id"] = $user->id;
+        }
+       
     }
-    ?>

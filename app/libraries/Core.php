@@ -7,6 +7,7 @@
         protected $params = [];
         public function __construct()
         {
+            session_start();
             $url = $this->getUrl();
             if (isset($url[0]))
             {
